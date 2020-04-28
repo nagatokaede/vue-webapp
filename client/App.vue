@@ -1,13 +1,42 @@
 <template>
-    <div id="app"></div>
+    <div id="app">
+        <HeaderComponent></HeaderComponent>
+    </div>
 </template>
 
 <script>
-  export default {
-    name: "main"
+import HeaderComponent from './component/header.vue';
+import 'vant/lib/index.css';
+
+import icon from './asset/image/kaede.ico';
+
+export default {
+  name: 'App',
+
+  components: {
+    HeaderComponent,
+  },
+  
+  methods: {
+    faviconInit() {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = icon;
+      link.type = 'image/x-icon';
+
+      const head = document.getElementsByTagName("head")[0];
+      head.appendChild(link);
+    },
+  },
+
+  mounted() {
+    this.faviconInit();
   }
+}
 </script>
 
-<style scoped>
-
+<style lang="less">
+    body {
+        background-image: url("./asset/image/bg.jpg");
+    }
 </style>

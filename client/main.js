@@ -3,9 +3,8 @@
 import Vue from 'vue';
 import App from './App.vue';
 
-Vue({
-  el: '#app',
+new Vue({
   render: function render(h) {
     return h(App);
   },
-});
+}).$mount('#app');
