@@ -7,7 +7,7 @@
     "test": "webpack client/main.js -o webapp --mode=development",
     "build": "webpack --config build/webpack.config.js",
     "server": "node server/server.js",
-    "dev": "npx webpack-dev-server build/webpack.config.js"
+    "dev": "webpack-dev-server --config build/webpack.config.js"
   },
   "author": "nagato kaede",
   "license": "ISC",

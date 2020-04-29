@@ -23,7 +23,7 @@ const commonCssLoader = [
 module.exports = {
   entry: './client/main.js',
   output: {
-    filename: 'js/[hash:10].main.js',
+    filename: 'js/main.[contenthash:10].js',
     path: resolve(__dirname, '../webapp'),
   },
   // 配置vue别名和扩展
@@ -37,6 +37,15 @@ module.exports = {
   module: {
     rules: [
       // 详细 loader 配置
+      // {
+      //   // js 语法检测
+      //   test: /\.js$/,
+      //   exclude: /node_modules/,
+      //   loader: 'eslint-loader',
+      //   options: {
+      //     fix: true
+      //   }
+      // },
       {
         // 处理 css 资源
         test: /\.css$/,
@@ -60,7 +69,7 @@ module.exports = {
         options: {
           limit: 8 * 1024,
           esModule: false,
-          name: '[hash:10].[ext]',
+          name: '[contenthash:10].[ext]',
           outputPath: 'img'
         },
       },
@@ -69,25 +78,18 @@ module.exports = {
         exclude: /\.(html|js|css|less|jpg|png|gif|vue)$/,
         loader: 'file-loader',
         options: {
-          name: '[hash:10].[ext]',
+          name: '[contenthash:10].[ext]',
           outputPath: 'media'
         }
       },
-      // {
-      //   // js 语法检测
-      //   test: /\.js$/,
-      //   exclude: /node_modules/,
-      //   loader: 'eslint-loader',
-      //   options: {
-      //     fix: true
-      //   }
-      // },
       {
         // js 兼容性处理 babel
         test: /\.js$/,
         exclude: /node_modules/,
         loader: 'babel-loader',
         options: {
+          // babel 缓存，下一次构建时只重新处理更新的文件，使打包更快
+          cacheDirectory: true,
           presets: [
             [
               '@babel/preset-env',
@@ -100,7 +102,7 @@ module.exports = {
                   ie: '9',
                   safari: '10',
                   edge: '17'
-                }
+                },
               }
             ]
           ],
@@ -113,13 +115,18 @@ module.exports = {
           ]
         }
       },
+      // {
+      //   oneOf: [
+      //
+      //   ]
+      // }
     ]
   },
   plugins: [
     // 详细的 plugins 配置
     // css 文件处理打包
     new MiniCssExtractPlugin({
-      filename: 'css/[hash:10].css'
+      filename: 'css/[contenthash:10].css'
     }),
     // 创建 html 文件
     new HtmlWebpackPlugin({
@@ -136,7 +143,9 @@ module.exports = {
     contentBase: resolve(__dirname, '../webapp'),
     compress: true,
     port: 3001,
-    open: true
+    open: true,
+    // hot: true
   },
+  devtool: 'source-map',
   mode: 'development',
 };
