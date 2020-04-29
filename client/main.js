@@ -2,9 +2,14 @@
 
 import Vue from 'vue';
 import App from './App.vue';
+import router from './router';
+import VConsole from 'vconsole';
+
+Vue.config.productionTip = false;
+
+new VConsole();
 
 new Vue({
-  render: function render(h) {
-    return h(App);
-  },
+  render: h => h(App),
+  router, // router 不能使用别名
 }).$mount('#app');

@@ -1,12 +1,12 @@
 <template>
     <div id="app">
         <HeaderComponent></HeaderComponent>
+        <router-view></router-view>
     </div>
 </template>
 
 <script>
 import HeaderComponent from './component/header.vue';
-import 'vant/lib/index.css';
 
 import icon from './asset/image/kaede.ico';
 

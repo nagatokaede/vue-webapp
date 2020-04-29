@@ -13,9 +13,9 @@ const commonCssLoader = [
     loader: 'postcss-loader',
     options: {
       ident: 'postcss',
-      plugins: () => {
+      plugins: () => [
         require('postcss-preset-env')()
-      }
+      ]
     }
   }
 ];
@@ -23,8 +23,16 @@ const commonCssLoader = [
 module.exports = {
   entry: './client/main.js',
   output: {
-    filename: 'js/build.js',
+    filename: 'js/[hash:10].main.js',
     path: resolve(__dirname, '../webapp'),
+  },
+  // 配置vue别名和扩展
+  resolve: {
+    extensions: ['.js', '.vue', '.json'],
+    alias: {
+      'vue$': 'vue/dist/vue.esm.js',
+      '@': resolve(__dirname, '../client'),
+    }
   },
   module: {
     rules: [
@@ -42,17 +50,8 @@ module.exports = {
       {
         // 处理 vue 文件
         test: /\.vue$/,
-        // exclude: /node_modules/,
+        exclude: /node_modules/,
         loader: 'vue-loader'
-      },
-      // html中引用的静态资源在这里处理,默认配置参数attrs=img:src,处理图片的src引用的资源.
-      {
-        test: /\.html$/,
-        loader: 'html-loader',
-        options: {
-          // 除了img的src,还可以继续配置处理更多html引入的资源
-          attrs: ['img:src', 'img:data-src', 'audio:src']
-        }
       },
       {
         // 处理图片资源
@@ -74,15 +73,15 @@ module.exports = {
           outputPath: 'media'
         }
       },
-      {
-        // js 语法检测
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: 'eslint-loader',
-        options: {
-          fix: true
-        }
-      },
+      // {
+      //   // js 语法检测
+      //   test: /\.js$/,
+      //   exclude: /node_modules/,
+      //   loader: 'eslint-loader',
+      //   options: {
+      //     fix: true
+      //   }
+      // },
       {
         // js 兼容性处理 babel
         test: /\.js$/,
@@ -104,6 +103,13 @@ module.exports = {
                 }
               }
             ]
+          ],
+          plugins: [
+            ['import', {
+              libraryName: 'vant',
+              libraryDirectory: 'es',
+              style: true
+            }, 'vant']
           ]
         }
       },
@@ -113,7 +119,7 @@ module.exports = {
     // 详细的 plugins 配置
     // css 文件处理打包
     new MiniCssExtractPlugin({
-      filename: 'css/build.css'
+      filename: 'css/[hash:10].css'
     }),
     // 创建 html 文件
     new HtmlWebpackPlugin({
@@ -125,12 +131,6 @@ module.exports = {
     new CleanWebpackPlugin(),
     // CSS 文件压缩
     new OptimizeCssAssetsWebpackPlugin(),
-    // vant 样式框架按需引入
-    // ['import', {
-    //   libraryName: 'vant',
-    //   libraryDirectory: 'es',
-    //   style: true
-    // }, 'vant']
   ],
   devServer: {
     contentBase: resolve(__dirname, '../webapp'),
