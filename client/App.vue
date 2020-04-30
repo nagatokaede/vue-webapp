@@ -39,4 +39,7 @@ export default {
     body {
         background-image: url("./asset/image/bg.jpg");
     }
+    #app {
+        height: 100vh;
+    }
 </style>

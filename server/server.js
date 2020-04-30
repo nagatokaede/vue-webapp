@@ -8,10 +8,5 @@ const app = new Koa();
 
 app.use(Static(resolve(__dirname, '../webapp')));
 
-app.use(async (ctx, next) => {
-  if (ctx.path === '/') ctx.body = 'hello world!';
-  await next();
-});
-
-app.listen('3001');
-console.info('koa running: http://localhost:3001');
+app.listen('3002');
+console.info('koa running: http://localhost:3002');

@@ -1,6 +1,6 @@
 <template>
     <div class="home">
-        <van-image v-for="(img, index) in imageList" width="100" height="100" lazy-load :src="img" :key="index"/>
+        <van-image v-for="(img, index) in imageList" width="100%" lazy-load :src="img" :key="index"/>
     </div>
 </template>
 
@@ -15,12 +15,16 @@ Vue.use(Lazyload);
 
 export default {
   name: 'Home',
-  
+
   data() {
     return {
       imageList: [
         'https://img.yzcdn.cn/vant/apple-1.jpg',
         'https://img.yzcdn.cn/vant/apple-2.jpg',
+        'https://img.yzcdn.cn/vant/apple-3.jpg',
+        'https://img.yzcdn.cn/vant/apple-4.jpg',
+        'https://img.yzcdn.cn/vant/apple-5.jpg',
+        'https://img.yzcdn.cn/vant/apple-6.jpg',
       ],
     };
   },
@@ -28,5 +32,7 @@ export default {
 </script>
 
 <style scoped>
-
+    img {
+        width: 100%;
+    }
 </style>

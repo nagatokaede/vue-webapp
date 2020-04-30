@@ -5,6 +5,18 @@ const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 
+const os = require('os');
+// 动态获取 host || 也可在package.json中配置 HOST （--host 0.0.0.0)
+const HOST = (() => {
+  for (const key in os.networkInterfaces()) {
+    for (const item of os.networkInterfaces()[key]) {
+      if (item.family === 'IPv4' && item.address.includes('192.168.')) {
+        return item.address;
+      }
+    }
+  }
+})();
+
 process.env.NODE_ENV = 'development';
 
 const commonCssLoader = [
@@ -23,7 +35,7 @@ const commonCssLoader = [
 module.exports = {
   entry: './client/main.js',
   output: {
-    filename: 'js/main.[contenthash:10].js',
+    filename: 'js/main.[hash:10].js',
     path: resolve(__dirname, '../webapp'),
   },
   // 配置vue别名和扩展
@@ -69,7 +81,7 @@ module.exports = {
         options: {
           limit: 8 * 1024,
           esModule: false,
-          name: '[contenthash:10].[ext]',
+          name: '[hash:10].[ext]',
           outputPath: 'img'
         },
       },
@@ -78,7 +90,7 @@ module.exports = {
         exclude: /\.(html|js|css|less|jpg|png|gif|vue)$/,
         loader: 'file-loader',
         options: {
-          name: '[contenthash:10].[ext]',
+          name: '[hash:10].[ext]',
           outputPath: 'media'
         }
       },
@@ -126,7 +138,7 @@ module.exports = {
     // 详细的 plugins 配置
     // css 文件处理打包
     new MiniCssExtractPlugin({
-      filename: 'css/[contenthash:10].css'
+      filename: 'css/[hash:10].css'
     }),
     // 创建 html 文件
     new HtmlWebpackPlugin({
@@ -142,9 +154,10 @@ module.exports = {
   devServer: {
     contentBase: resolve(__dirname, '../webapp'),
     compress: true,
+    host: HOST,
     port: 3001,
     open: true,
-    // hot: true
+    hot: true
   },
   devtool: 'source-map',
   mode: 'development',
