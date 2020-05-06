@@ -6,6 +6,18 @@ const { proxy } = require('../config');
 
 const context = proxy.map(item => item.context);
 
+const pathRewrite = a => {
+  return {
+  
+  }
+};
+
+const router = a => {
+  return {
+  
+  }
+};
+
 const options = () => {
   
   return {
@@ -24,7 +36,12 @@ const options = () => {
   };
 };
 
+const proxyMiddleware = (options) => {
+  
+  
+  
+  return c2k(createProxyMiddleware(context, options()))(ctx, next);
+};
 
-module.exports = c2k(createProxyMiddleware(context, options()));
 
-
+module.exports = proxyMiddleware;

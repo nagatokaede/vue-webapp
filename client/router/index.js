@@ -13,11 +13,11 @@ const route = new Router({
   }, {
     path: '/home',
     name: 'home',
-    component: () => import('@/page/home.vue'),
+    component: () => import('../page/home'),
   }, {
     path: '/login',
     name: 'login',
-    component: () => import('@/page/login.vue'),
+    component: () => import('../page/login'),
   }],
 });
 

@@ -16,7 +16,7 @@ export default {
   components: {
     HeaderComponent,
   },
-  
+
   methods: {
     faviconInit() {
       const link = document.createElement('link');
