@@ -3,21 +3,23 @@
 import Vue from 'vue';
 import Router from 'vue-router';
 
+// import { SessionStorage } from '../util/tool';
+
 Vue.use(Router);
 
 const route = new Router({
   // mode: 'history',
   routes: [{
     path: '/',
-    redirect: '/home'
+    redirect: '/home',
   }, {
     path: '/home',
     name: 'home',
-    component: () => import('../page/home'),
+    component: () => import(/* webpackChunkName: "group-home" */ '../page/home'),
   }, {
     path: '/login',
     name: 'login',
-    component: () => import('../page/login'),
+    component: () => import(/* webpackChunkName: "group-login" */ '../page/login'),
   }],
 });
 

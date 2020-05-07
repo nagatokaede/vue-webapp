@@ -1,7 +1,7 @@
 <template>
     <div class="login">
         <van-form @submit="onSubmit">
-            <van-field v-model="username" name="username" label="用户名" placeholder="用户名"
+            <van-field v-model="username" name="userName" label="用户名" placeholder="用户名"
                     :rules="[{ required: true, message: '请填写用户名' }]"/>
             <van-field v-model="password" type="password" name="password" label="密码" placeholder="密码"
                     :rules="[{ required: true, message: '请填写密码' }]"/>
@@ -17,11 +17,13 @@
 <script>
 import Vue from 'vue';
 import { mapActions } from 'vuex';
+import api from '../api';
 
 import logo from '../asset/image/kaede.png';
 
-import { Button, Form, Image as VanImage, Field } from 'vant';
+import { Button, Form, Image as VanImage, Field, Notify } from 'vant';
 
+Vue.use(Notify);
 Vue.use(Field);
 Vue.use(Form);
 Vue.use(VanImage);
@@ -42,9 +44,25 @@ export default {
     ...mapActions('app', [
       'setTitle',
     ]),
+    
+    login(body) {
+      return new Promise((resolve) => {
+        api.post('/admin/login', body).then(res => {
+          if (res.status === 'SUCCEED') {
+            resolve(res.data);
+          } else {
+            Notify({ type: 'warning', message: res.errorMessage });
+          }
+        }).catch(err  => {
+          Notify({ type: 'warning', message: err });
+        });
+      });
+    },
 
     onSubmit(values) {
-      console.log('submit', values);
+      this.login(values).then(() => {
+        this.$router.push({path: '/home'});
+      });
     },
   },
   
@@ -60,5 +78,11 @@ export default {
         display: flex;
         align-items: center;
         justify-content: center;
+    }
+</style>
+
+<style lang="less">
+    .van-cell {
+        background-color: rgba(0,0,0,0);
     }
 </style>

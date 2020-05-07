@@ -2,23 +2,23 @@
 
 const App = {
   namespaced: true,
-  
+
   state: {
     title: 'home',
   },
-  
+
   getters: {
     getTitle(state) {
       return state.title;
     },
   },
-  
+
   mutations: {
     setTitle(state, payload) {
-      state.title = payload
+      state.title = payload;
     },
   },
-  
+
   actions: {
     setTitle({ commit }, payload) {
       commit('setTitle', payload);
@@ -26,8 +26,8 @@ const App = {
 
     initTitle({ commit }) {
       commit('setTitle', 'home');
-    }
-  }
+    },
+  },
 };
 
 export default App;
