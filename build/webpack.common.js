@@ -4,7 +4,6 @@ const { resolve } = require('path');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 module.exports = hashType => {
   const commonCssLoader = [
@@ -90,35 +89,46 @@ module.exports = hashType => {
               // js 兼容性处理 babel
               test: /\.js$/,
               exclude: /node_modules/,
-              loader: 'babel-loader',
-              options: {
-                // babel 缓存，下一次构建时只重新处理更新的文件，使打包更快
-                cacheDirectory: true,
-                presets: [
-                  [
-                    '@babel/preset-env',
-                    {
-                      useBuiltIns: 'usage',
-                      corejs: { version: 3 },
-                      targets: {
-                        chrome: '60',
-                        firefox: '60',
-                        ie: '9',
-                        safari: '10',
-                        edge: '17'
-                      },
-                    }
-                  ]
-                ],
-                plugins: [
-                  ['import', {
-                    libraryName: 'vant',
-                    libraryDirectory: 'es',
-                    style: true
-                  }, 'vant'],
-                  '@babel/plugin-syntax-dynamic-import'
-                ]
-              }
+              use: [
+                {
+                  loader: 'thread-loader',
+                  options: {
+                    workers: 2 // 进程2个
+                  }
+                },
+                {
+                  loader: 'babel-loader',
+                  options: {
+                    // babel 缓存，下一次构建时只重新处理更新的文件，使打包更快
+                    cacheDirectory: true,
+                    presets: [
+                      [
+                        '@babel/preset-env',
+                        {
+                          useBuiltIns: 'usage',
+                          corejs: { version: 3 },
+                          targets: {
+                            chrome: '60',
+                            firefox: '60',
+                            ie: '9',
+                            safari: '10',
+                            edge: '17'
+                          },
+                        }
+                      ]
+                    ],
+                    plugins: [
+                      ['import', {
+                        libraryName: 'vant',
+                        libraryDirectory: 'es',
+                        style: true
+                      }, 'vant'],
+                      '@babel/plugin-syntax-dynamic-import'
+                    ]
+                  }
+                },
+              ],
+              
             },
           ],
         },
@@ -132,8 +142,6 @@ module.exports = hashType => {
       }),
       // vue 文件处理打包
       new VueLoaderPlugin(),
-      // 打包前清除过去打包的文件夹
-      new CleanWebpackPlugin(),
     ],
   };
 };

@@ -3,6 +3,7 @@
 const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TerserWebpackPlugin = require('terser-webpack-plugin');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const merge = require('webpack-merge');
 const common = require('./webpack.common');
@@ -12,6 +13,8 @@ process.env.NODE_ENV = 'production';
 module.exports = merge(common('contenthash'), {
   plugins: [
     // 详细的 plugins 配置
+    // 打包前清除过去打包的文件夹
+    new CleanWebpackPlugin(),
     // CSS 文件压缩
     new OptimizeCssAssetsWebpackPlugin(),
     // 创建 html 文件
