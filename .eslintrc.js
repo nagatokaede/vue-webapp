@@ -25,6 +25,7 @@ module.exports = {
     'import/no-named-as-default': 'off',
     'import/no-named-as-default-member': 'off',
     'import/prefer-default-export': 'off',
+    'max-len': 'off',
     'no-param-reassign': ['error', {
       props: true,
       ignorePropertyModificationsFor: [

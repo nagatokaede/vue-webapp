@@ -6,30 +6,41 @@ import { SessionStorage } from '../util/tool';
 
 
 // 取消请求
-// let CancelToken = Axios.CancelToken;
+// const { CancelToken } = Axios;
 
 const api = Axios.create({
   baseURL: 'api',
-  timeout: 3000,
+  timeout: 30000,
 });
 
 // 添加请求拦截器
 api.interceptors.request.use((config) => {
-  // 在发送请求之前做些什么
+  // 添加 token
   const token = SessionStorage.get('token');
   if (token) {
     config.headers.token = token;
   }
+  // // 添加取消请求方法
+  // config.cancelToken = new CancelToken(((c) => {
+  //   config.cancel = c;
+  // }));
   return config;
 }, (error) => Promise.reject(error));
 
 // 添加响应拦截器
 api.interceptors.response.use((response) => {
-  // 对响应数据做点什么
+  // 更新 token
   if (response.headers.token) {
     SessionStorage.set({ token: response.headers.token });
+  } else {
+    SessionStorage.del('token');
   }
   return response.data;
-}, (error) => Promise.reject(error));
+}, (error) => {
+  // 无权限访问返回登录页面
+  if (error.response.status === 403) window.location.href = '/login';
+  console.log(window.location);
+  return Promise.reject(error.message);
+});
 
 export default api;

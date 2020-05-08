@@ -47,15 +47,17 @@ export default {
     
     login(body) {
       return new Promise((resolve) => {
-        api.post('/admin/login', body).then(res => {
-          if (res.status === 'SUCCEED') {
-            resolve(res.data);
-          } else {
-            Notify({ type: 'warning', message: res.errorMessage });
-          }
-        }).catch(err  => {
-          Notify({ type: 'warning', message: err });
-        });
+        api.post('/admin/login', body)
+          .then(res => {
+            if (res.status === 'SUCCEED') {
+              resolve(res.data);
+            } else {
+              Notify({ type: 'warning', message: res.errorMessage });
+            }
+          })
+          .catch(err => {
+            Notify({ type: 'warning', message: err });
+          });
       });
     },
 

@@ -6,10 +6,11 @@
 
 <script>
 import Vue from 'vue';
+import api from '../api';
 
-import { Lazyload } from 'vant';
-import { Image as VanImage } from 'vant';
+import { Lazyload, Image as VanImage, Notify } from 'vant';
 
+Vue.use(Notify);
 Vue.use(VanImage);
 Vue.use(Lazyload);
 
@@ -28,11 +29,40 @@ export default {
       ],
     };
   },
+  
+  methods: {
+    getIns(body) {
+      return new Promise((resolve) => {
+        api.post('/ins/search', body)
+          .then(res => {
+            if (res.status === 'SUCCEED') {
+              resolve(res.data);
+            } else {
+              Notify({ type: 'warning', message: res.errorMessage });
+            }
+          })
+          .catch(err => {
+            Notify({ type: 'warning', message: err.toString() });
+          });
+      });
+    },
+
+    showInsImage() {
+      this.getIns({ url: 'https://instagram.com/yuihorie_official?igshid=lt0m62z7fqmx' }).then(res => {
+        this.imageList = res.urls;
+      });
+    },
+  },
+  
+  created() {
+    this.showInsImage();
+  }
 }
 </script>
 
 <style scoped>
     img {
         width: 100%;
+        min-height: 100px;
     }
 </style>

@@ -45,6 +45,10 @@ module.exports = merge(common('hash'), {
     open: true,
     // 启用热加载
     hot: true,
+    // 在所有响应中添加首部内容
+    headers: {
+      'Connection': 'keep-alive'
+    },
     // 设置代理
     proxy: {
       '/api': {
@@ -53,8 +57,14 @@ module.exports = merge(common('hash'), {
         // 重写资源路径
         pathRewrite: {
           '^/api': ''
-        }
+        },
+        // 跨域
+        changeOrigin: true,
+        logLevel: 'debug',
+        socket: 'socket'
       }
-    }
+    },
+    // 在使用单页面应用的时候，需要设置此参数，代表如果访问除根路径以外的地址，最终都会转向去请求根路径。
+    historyApiFallback: true,
   },
 });
