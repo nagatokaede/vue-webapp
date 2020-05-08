@@ -53,7 +53,7 @@ module.exports = merge(common('hash'), {
     proxy: {
       '/api': {
         // 请求域名
-        target: 'http://nagato.top:3000',
+        target: 'http://47.240.133.246:3000',
         // 重写资源路径
         pathRewrite: {
           '^/api': ''

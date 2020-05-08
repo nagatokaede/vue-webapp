@@ -6,6 +6,7 @@
 
 <script>
 import Vue from 'vue';
+import { mapActions } from 'vuex';
 import api from '../api';
 
 import { Lazyload, Image as VanImage, Notify } from 'vant';
@@ -20,17 +21,21 @@ export default {
   data() {
     return {
       imageList: [
-        'https://img.yzcdn.cn/vant/apple-1.jpg',
-        'https://img.yzcdn.cn/vant/apple-2.jpg',
-        'https://img.yzcdn.cn/vant/apple-3.jpg',
-        'https://img.yzcdn.cn/vant/apple-4.jpg',
-        'https://img.yzcdn.cn/vant/apple-5.jpg',
-        'https://img.yzcdn.cn/vant/apple-6.jpg',
+        // 'https://img.yzcdn.cn/vant/apple-1.jpg',
+        // 'https://img.yzcdn.cn/vant/apple-2.jpg',
+        // 'https://img.yzcdn.cn/vant/apple-3.jpg',
+        // 'https://img.yzcdn.cn/vant/apple-4.jpg',
+        // 'https://img.yzcdn.cn/vant/apple-5.jpg',
+        // 'https://img.yzcdn.cn/vant/apple-6.jpg',
       ],
     };
   },
-  
+
   methods: {
+    ...mapActions('app', [
+      'setTitle',
+    ]),
+
     getIns(body) {
       return new Promise((resolve) => {
         api.post('/ins/search', body)
@@ -53,8 +58,9 @@ export default {
       });
     },
   },
-  
+
   created() {
+    this.setTitle('堀江由衣');
     this.showInsImage();
   }
 }
