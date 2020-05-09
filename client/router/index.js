@@ -21,7 +21,6 @@ const route = new Router({
 });
 
 route.beforeEach((to, from, next) => {
-  console.info(to, from);
   if (to.name === 'login' || SessionStorage.get('token')) {
     next();
   } else {
