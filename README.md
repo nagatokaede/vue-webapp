@@ -20,8 +20,14 @@ $ npm install
 # 开发环境启动
 $ npm run dev
 
+# 项目打包
+$ npm run build
+
 # 生产环境启动
 $ npm run server
+
+# 生产环境一键安装打包启动
+$ npm run pord
 ```
 
 

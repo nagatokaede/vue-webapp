@@ -12,6 +12,7 @@ module.exports = {
     env: {
       NODE_ENV: 'production',
       PORT: '8080',
+      KOA_SERVER: 'localhost:3000',
     },
   
     listen_timeout: 10000,

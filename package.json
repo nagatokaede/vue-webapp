@@ -8,7 +8,7 @@
     "build": "webpack --config build/webpack.prod.config.js",
     "server": "node server/server.js",
     "dev": "webpack-dev-server --config build/webpack.dev.config.js",
-    "prod": "npm run build && npm run server"
+    "prod": "npm i && npm run build && npm run server"
   },
   "author": "nagato kaede",
   "license": "ISC",
