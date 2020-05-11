@@ -3,6 +3,9 @@ module.exports = {
     name: 'webapp',
     script: 'server/server.js',
 
+    output: 'logs/out.log',
+    error: 'logs/error.log',
+
     exec_mode: 'fork',
     max_memory_restart: '50M',
 
