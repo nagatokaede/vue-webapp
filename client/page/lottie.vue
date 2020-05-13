@@ -1,24 +1,24 @@
 <template>
     <div class="lottie">
         <van-uploader :after-read="afterRead" :max-count="1" accept="application/x-zip-compressed"></van-uploader>
-    
-        <van-button type="info" size="small" style="display: block; width: 100%;" @click="animationTest(test1)">
+
+        <div>
+            {{ title }}
+        </div>
+
+        <van-button type="info" size="small" style="display: block; width: 100%;" @click="testStart">
             test start 1
-        </van-button>
-    
-        <van-button type="info" size="small" style="display: block; width: 100%;" @click="animationTest(test2)">
-            test start 2
         </van-button>
 
         <div id="lottie"></div>
-    
+
         <div class="button-box">
             <div class="clear-fix" v-for="(item, index) in animationsKeys" :key="index">
                 <van-button type="info" size="small" style="float: left;"
                             @click="lottieAnimation.open(item)">
                     {{ item }}
                 </van-button>
-    
+
                 <van-button type="info" size="small" style="float: right;"
                             @click="lottieAnimation.close(item)">
                     {{ item }}
@@ -38,7 +38,7 @@ Vue.use(Button);
 Vue.use(Uploader);
 export default {
   name: 'lottie',
-  
+
   data() {
     return {
       typeDictionary: {
@@ -47,35 +47,39 @@ export default {
         zip: 'application/x-zip-compressed',
       },
 
-      test1: [
-        'wholeSideIn', 'flash',
-      ],
+      title: '',
+
+      // 入场动画列表
+      admission: {
+        openList: ['wholeSideIn', 'flash', ''],
+        closeList: [],
+      },
       test2: [
-        'whole', 'bonnet', 'trunk', 'leftFrontWindow',
+        'bonnet', 'trunk', 'leftFrontWindow',
         'leftFrontDoor', 'rightFrontWindow', 'rightFrontDoor',
         'leftRearWindow', 'leftRearDoor', 'rightRearWindow',
         'rightRearDoor', ['leftLight', 'rightLight'],
         ['leftParkingLight', 'rightParkingLight'], 'sunroof',
       ],
-  
+
       dictionaries: {
         '右前窗': 'rightFrontWindow',
         '左前窗': 'leftFrontWindow',
         '右前门': 'rightFrontDoor',
         '左前门': 'leftFrontDoor',
-  
+
         '右后窗': 'rightRearWindow',
         '左后窗': 'leftRearWindow',
         '右后门': 'rightRearDoor',
         '左后门': 'leftRearDoor',
-  
+
         '前灯': ['leftLight', 'rightLight'],
         '尾灯': ['leftParkingLight', 'rightParkingLight'],
       },
 
       animateTest: [
-        '整车关闭；',
-        '整车开启；',
+        // '整车关闭；',
+        // '整车开启；',
         '右前窗：开启、关闭',
         '右前窗+右前门：开启、关闭',
         '右前窗+左前窗：开启、关闭',
@@ -209,7 +213,7 @@ export default {
           'left_rear_window', 'right_rear_window', 'left_light', 'right_light',
           'left_parking_light', 'right_parking_light', 'sunroof', 'lock', 'unlock',
         ],
-  
+
         // 需要置底的模块名称, _ 命名格式
         placedDown: ['whole', 'whole_side_in'],
 
@@ -234,10 +238,11 @@ export default {
         close(animate) {
           const segments = [this.config[animate].closeFrameInfo.beginIndex, this.config[animate].closeFrameInfo.endIndex + 1];
           this.animations[animate].playSegments(segments, true);
-  
+
           return new Promise(resolve => {
             this.animations[animate].addEventListener('complete', () => {
               console.log(animate, ' close finish!');
+              this.animations[animate].removeEventListener('complete');
               resolve(animate);
             });
           });
@@ -250,7 +255,7 @@ export default {
     async afterRead(file) {
       // 解压上传文件
       const zipContent = await this.unpack(file.file);
-  
+
       // 删除旧子节点
       const lottieBox = document.getElementById('lottie');
       document.querySelectorAll('#lottie div').forEach(node => {
@@ -304,9 +309,9 @@ export default {
             console.log(err);
           })
       });
-      
+
     },
-  
+
     // 获取解压后的 zip 内文件 blob
     getZipContentBlob(zip, zipFileName) {
       return new Promise(resolve => {
@@ -317,7 +322,7 @@ export default {
         });
       });
     },
-  
+
     // 获取解压后的 zip 内文件 string
     getZipContentString(zip, zipFileName) {
       return new Promise(resolve => {
@@ -345,15 +350,15 @@ export default {
       // 注册控制按钮列表
       this.animationsKeys.push(name);
     },
-    
+
     // 创建 lottie 图层
     async createLayer(zipContent, dataJsonName, dir) {
       // 获取 data.json 内容
       const dataJsonString = await this.getZipContentString(zipContent, dataJsonName);
-  
+
       // 转换 JSON
       const dataJson = JSON.parse(dataJsonString);
-  
+
       // 将图片地址写入 data.json
       // 创建 promise 组合，异步转换
       const assets = dataJson.assets.map(async item => {
@@ -365,10 +370,10 @@ export default {
           return item;
         });
       });
-  
+
       // 异步转换，同步结果
       dataJson.assets = await Promise.all([...assets]);
-  
+
       // 将 data.json 转换为 blob
       const blob = new Blob([JSON.stringify(dataJson)], {
         type: 'application/json'
@@ -377,34 +382,74 @@ export default {
       // 生成 animation
       this.animation(URL.createObjectURL(blob), dir);
     },
-    
+
     // 批量同步动画执行列表
-    async animationAsyncStartList(openList, closeList) {
-      for (const animate of openList) {
-        if (typeof animate === 'string') {
-          await this.lottieAnimation.open(animate);
-        }
-        if (typeof animate === 'object') {
-          await Promise.all([...animate.map(item => this.lottieAnimation.open(item))])
+    async animationAsyncStartList(animations) {
+      const { openList, closeList } = animations;
+
+      if (openList) {
+        for (const animate of openList) {
+          if (typeof animate === 'string') {
+            await this.lottieAnimation.open(animate);
+          }
+          if (typeof animate === 'object') {
+            await Promise.all([...animate.map(item => this.lottieAnimation.open(item))])
+          }
         }
       }
-  
-      for (const animate of closeList) {
-        if (typeof animate === 'string') {
-          await this.lottieAnimation.close(animate);
-        }
-        if (typeof animate === 'object') {
-          await Promise.all([...animate.map(item => this.lottieAnimation.close(item))])
+
+      if (closeList) {
+        for (const animate of closeList) {
+          if (typeof animate === 'string') {
+            await this.lottieAnimation.close(animate);
+          }
+          if (typeof animate === 'object') {
+            await Promise.all([...animate.map(item => this.lottieAnimation.close(item))])
+          }
         }
       }
     },
-    
+
     // 动画组测试
-    animationTest(test) {
-      const animations = test;
-      const reverse = JSON.parse(JSON.stringify(test));
-      reverse.reverse();
-      this.animationAsyncStartList(animations, reverse);
+    async animationTest() {
+      // 入场
+      const interlude = {
+        openList: ['wholeSideIn', 'flash'],
+        closeList: ['flash', 'wholeSideIn'],
+      };
+      await this.animationAsyncStartList(interlude);
+      const admission = {
+        openList: ['whole'],
+      };
+      await this.animationAsyncStartList(admission);
+
+      // 测试
+      for (const test of this.animateTest) {
+        this.title = test;
+
+        const animateTest = test.split('：')[0].split('+').map(item => this.dictionaries[item]);
+
+        const animations = {
+          openList: animateTest,
+          closeList: JSON.parse(JSON.stringify(animateTest)),
+        };
+        animations.closeList.reverse();
+
+        console.log(animations);
+
+        await this.animationAsyncStartList(animations);
+        console.log(test);
+      }
+
+      // 出场
+      const comeOut = {
+        closeList: ['whole'],
+      };
+      await this.animationAsyncStartList(comeOut);
+    },
+
+    testStart() {
+      this.animationTest();
     },
   },
 }

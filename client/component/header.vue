@@ -5,7 +5,7 @@
                 <van-icon name="ellipsis" size="18" />
             </template>
         </van-nav-bar>
-    
+
         <van-popup v-model="ellipsis.state" get-container="body" position="left" :style="{ width: '40%', height: '100%' }">
             <!-- header -->
             <div class="user-image">
@@ -40,7 +40,7 @@ import logo from '../asset/image/kaede.png';
 
 export default {
   name: 'na-header',
-  
+
   data() {
     return {
       logo,
@@ -50,20 +50,21 @@ export default {
         open: () => this.ellipsis.state = true,
         close: () => this.ellipsis.state = false,
       },
-      
+
       pages: {
         login: '登陆',
         home: '主页',
+        lottie: 'lottie',
       },
     };
   },
-  
+
   computed: {
     ...mapGetters('app', [
       'getTitle'
     ]),
   },
-  
+
   methods: {
     onClickReturn() {
       console.info('返回');
@@ -91,7 +92,7 @@ export default {
         display: block;
         line-height: 36px;
     }
-    
+
     .user-image {
         margin: 20px;
         .van-image--round {
