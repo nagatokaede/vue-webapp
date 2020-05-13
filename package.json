@@ -15,9 +15,12 @@
   "dependencies": {
     "axios": "^0.19.2",
     "http-proxy-middleware": "^1.0.3",
+    "js-base64": "^2.5.2",
+    "jszip": "^3.4.0",
     "koa": "^2.11.0",
     "koa-static": "^5.0.0",
     "koa2-connect": "^1.0.2",
+    "lottie-web": "^5.6.10",
     "pm2": "^4.4.0",
     "vant": "^2.7.0",
     "vue": "^2.6.11",

@@ -17,11 +17,16 @@ const route = new Router({
     path: '/login',
     name: 'login',
     component: () => import(/* webpackChunkName: "group-login" */ '../page/login'),
+  }, {
+    path: '/lottie',
+    name: 'lottie',
+    component: () => import(/* webpackChunkName: "group-lottie" */ '../page/lottie'),
   }],
 });
 
 route.beforeEach((to, from, next) => {
-  if (to.name === 'login' || SessionStorage.get('token')) {
+  const pass = ['login', 'lottie'];
+  if (pass.includes(to.name) || SessionStorage.get('token')) {
     next();
   } else {
     next('/login');
