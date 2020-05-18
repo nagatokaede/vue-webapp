@@ -12,8 +12,8 @@ module.exports = {
       context: 'api',
     },
     {
-      target: `http://${env.DEV_SERVER || 'localhost:3001'}/`,
-      context: 'webpack-getaway',
+      target: `https://${env.DEV_SERVER || 'kaede-oss.oss-cn-shanghai.aliyuncs.com'}/`,
+      context: 'oss',
     }
   ]
 };

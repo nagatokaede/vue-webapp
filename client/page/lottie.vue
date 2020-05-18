@@ -32,6 +32,7 @@
 import Vue from 'vue';
 import lottie from 'lottie-web';
 import JSZip from 'jszip';
+import JSZipUtils from 'jszip-utils';
 import {Uploader,Button} from 'vant';
 
 Vue.use(Button);
@@ -291,6 +292,36 @@ export default {
         }
       }
     },
+    
+    getInternalZip(url) {
+      return new JSZip.external.Promise((resolve, reject) => {
+        JSZipUtils.getBinaryContent(url, (err, data) => {
+          if (err) {
+            reject(err);
+          } else {
+            this.unpack(data).then(content => {
+              resolve(content);
+            });
+          }
+        });
+      });
+  
+      // promise.then(JSZip.loadAsync)                     // 2) chain with the zip promise
+      //   .then(function(zip) {
+      //     return zip.file('Hello.txt').async('string'); // 3) chain with the text content promise
+      //   })
+      //   .then(function success(text) {                    // 4) display the result
+      //     $("#jszip_utils").append($("<p>", {
+      //       "class": "alert alert-success",
+      //       text: "loaded, content = " + text
+      //     }));
+      //   }, function error(e) {
+      //     $("#jszip_utils").append($("<p>", {
+      //       "class": "alert alert-danger",
+      //       text: e
+      //     }));
+      //   });
+    },
 
     // 下划线 -> 驼峰转换
     humpConverter(name) {
@@ -412,12 +443,15 @@ export default {
 
     // 动画组测试
     async animationTest() {
-      // 入场
+      // 过场
       const interlude = {
         openList: ['wholeSideIn', 'flash'],
         closeList: ['flash', 'wholeSideIn'],
       };
       await this.animationAsyncStartList(interlude);
+      
+      // 入场
+      this.title = '整车开启';
       const admission = {
         openList: ['whole'],
       };
@@ -431,9 +465,9 @@ export default {
 
         const animations = {
           openList: animateTest,
-          closeList: JSON.parse(JSON.stringify(animateTest)),
+          closeList: animateTest,
         };
-        animations.closeList.reverse();
+        // animations.closeList.reverse();
 
         console.log(animations);
 
@@ -442,6 +476,7 @@ export default {
       }
 
       // 出场
+      this.title = '整车关闭';
       const comeOut = {
         closeList: ['whole'],
       };
@@ -452,6 +487,45 @@ export default {
       this.animationTest();
     },
   },
+  
+  mounted() {
+    this.getInternalZip('/oss/1573120876979_vw_2019_C425PZ_P1P1_68c1b000.zip').then(async zipContent => {
+      // 删除旧子节点
+      const lottieBox = document.getElementById('lottie');
+      document.querySelectorAll('#lottie div').forEach(node => {
+        lottieBox.removeChild(node);
+      });
+  
+      // 获取动画播放帧数配置
+      const configData = await this.getZipContentString(zipContent, 'config.json');
+      const configDataSideIn = await this.getZipContentString(zipContent, 'config_car_slide_in.json');
+      const configDataJson = Object.assign(JSON.parse(configData), JSON.parse(configDataSideIn));
+      this.lottieAnimation.config = configDataJson;
+  
+      // 遍历创建图层
+      for (const item of Object.keys(zipContent.files)) {
+        const dir = item.split('/')[0];
+    
+        if (item.includes('/data.json') && configDataJson[this.humpConverter(dir)]) {
+          // 创建容器
+          const layer = document.createElement('div');
+          layer.setAttribute('id', dir);
+          // 添加排列顺序
+          if (this.lottieAnimation.placedTop.includes(dir)) {
+            layer.style.zIndex = '2';
+          } else if (this.lottieAnimation.placedDown.includes(dir)) {
+            layer.style.zIndex = '0';
+          } else {
+            layer.style.zIndex = '1';
+          }
+          lottieBox.appendChild(layer);
+      
+          // 添加动画图层
+          this.createLayer(zipContent, item, dir);
+        }
+      }
+    });
+  }
 }
 </script>
 
@@ -461,6 +535,9 @@ export default {
         div {
             position: absolute;
             top: 0;
+            &:nth-child(1) {
+                position: inherit;
+            }
         }
     }
     .button-box {

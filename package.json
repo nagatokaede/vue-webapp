@@ -17,6 +17,7 @@
     "http-proxy-middleware": "^1.0.3",
     "js-base64": "^2.5.2",
     "jszip": "^3.4.0",
+    "jszip-utils": "^0.1.0",
     "koa": "^2.11.0",
     "koa-static": "^5.0.0",
     "koa2-connect": "^1.0.2",
