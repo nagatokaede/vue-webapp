@@ -4,6 +4,7 @@ const { resolve } = require('path');
 
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const ProgressBarPlugin = require('progress-bar-webpack-plugin');
 
 module.exports = hashType => {
   const commonCssLoader = [
@@ -142,6 +143,8 @@ module.exports = hashType => {
       }),
       // vue 文件处理打包
       new VueLoaderPlugin(),
+      // 打包进度条
+      new ProgressBarPlugin(),
     ],
   };
 };
