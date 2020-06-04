@@ -7,7 +7,7 @@
         </div>
 
         <van-button type="info" size="small" style="display: block; width: 100%;" @click="testStart">
-            test start 1
+            start
         </van-button>
 
         <div id="lottie"></div>
@@ -254,6 +254,7 @@ export default {
 
   methods: {
     async afterRead(file) {
+      console.log(file);
       // 解压上传文件
       const zipContent = await this.unpack(file.file);
 
@@ -541,8 +542,10 @@ export default {
         }
     }
     .button-box {
-        position: relative;
+        position: absolute;
         z-index: 1000;
+        top: 200px;
+        width: 100%;
         div {
             margin-bottom: 10px;
             opacity: .5;

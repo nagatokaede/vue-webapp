@@ -16,5 +16,24 @@ const proxyMiddleware = (context, options) => {
   };
 };
 
+const proxyConfig = (config) => {
+  // 反向代理配置计算
+  const pathRewrite = {};
+  const router = {};
+  const context = [];
+  config.forEach(item => {
+    context.push('/' + item.context);
+    pathRewrite['^/' + item.context] = '';
+    router['/' + item.context] = item.target;
+  });
+  return {
+    pathRewrite,
+    router,
+    context,
+  };
+};
 
-module.exports = proxyMiddleware;
+module.exports = {
+  proxyMiddleware,
+  proxyConfig,
+}

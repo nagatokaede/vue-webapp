@@ -4,7 +4,7 @@ const Koa = require('koa');
 const Static = require('koa-static');
 const { resolve } = require('path');
 
-const proxyMiddleware = require('./middleware/proxy');
+const { proxyMiddleware, proxyConfig } = require('./middleware/proxy');
 const returnHomeMiddleware = require('./middleware/returnHome');
 
 const { proxy, port } = require('./config');
@@ -14,14 +14,7 @@ const app = new Koa();
 app.use(Static(resolve(__dirname, '../webapp')));
 
 // 反向代理配置计算
-const pathRewrite = {};
-const router = {};
-const context = [];
-proxy.forEach(item => {
-  context.push('/' + item.context);
-  pathRewrite['^/' + item.context] = '';
-  router['/' + item.context] = item.target;
-});
+const { pathRewrite, context, router } = proxyConfig(proxy);
 
 // 反向代理中间件
 app.use(proxyMiddleware(context, {

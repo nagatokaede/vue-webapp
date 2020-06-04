@@ -8,6 +8,7 @@ const merge = require('webpack-merge');
 const common = require('./webpack.common');
 
 const { proxy } = require('../server/config');
+const { proxyConfig } = require('../server/middleware/proxy');
 
 process.env.NODE_ENV = 'development';
 
@@ -24,14 +25,7 @@ const HOST = (() => {
 })();
 
 // 反向代理配置计算
-const pathRewrite = {};
-const router = {};
-const context = [];
-proxy.forEach(item => {
-  context.push('/' + item.context);
-  pathRewrite['^/' + item.context] = '';
-  router['/' + item.context] = item.target;
-});
+const { pathRewrite, context, router } = proxyConfig(proxy);
 
 module.exports = merge(common('hash'), {
   plugins: [
