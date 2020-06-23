@@ -488,7 +488,11 @@ export default {
       this.animationTest();
     },
   },
-  
+
+  created() {
+    this.setTitle('lottie 测试');
+  },
+
   mounted() {
     this.getInternalZip('/oss/1573120876979_vw_2019_C425PZ_P1P1_68c1b000.zip').then(async zipContent => {
       // 删除旧子节点
